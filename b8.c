@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "mem.h"
+#include "media.h"
+
 #define CHECK_STD_ERROR(predicate, name) do{\
 	if(predicate){\
 		perror(name);\
@@ -12,11 +15,7 @@
 	}\
 }while(0)
 
-#define MEM_SIZE  0x40000
-#define CART_SIZE 0x20000
-#define CART_HEADER_SIZE 0x20
-
-char mem[MEM_SIZE] __attribute__ ((section ("mem_section"))) = {0};
+unsigned char mem[MEM_SIZE] __attribute__ ((section ("mem_section"))) = {0};
 
 void load_cart(const char *filename){
 	int fd = open(filename, O_RDONLY);
@@ -41,8 +40,19 @@ int main(int argc, char *argv[]){
 
 	cart_fun = (void*)mem+CART_HEADER_SIZE;
 
-	cart_fun();
+	load_media(argv[1]);
 
-	printf("%d\n",(int)mem[CART_SIZE]);
+	int cont = 1;
+	while(cont){
+		cont = update_input();
+
+		cart_fun();
+
+		update_graphics();
+	}
+
+	unload_media();
+
+	printf("%d\n",(int)mem[SCREEN_MEM_OFFSET]);
 	return 0;
 }
