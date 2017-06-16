@@ -1,4 +1,5 @@
-LDFLAGS=-Wl,--section-start=mem_chunk=0x20000
+CFLAGS=-Wall -Wextra
+LDFLAGS=-Wl,--section-start=mem_section=0x20000
 
 PROG=b8
 CARTS=$(patsubst %.asm,%.bin,$(wildcard *.asm))
