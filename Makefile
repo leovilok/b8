@@ -1,14 +1,16 @@
 LDFLAGS=-Wl,--section-start=mem_chunk=0x20000
 
+PROG=b8
 CARTS=$(patsubst %.asm,%.bin,$(wildcard *.asm))
 
-all: b8 $(CARTS)
+all: $(PROG) $(CARTS)
 
 clean:
-	-$(RM) b8 *.bin
+	-$(RM) $(PROG) $(CARTS)
 
 %.bin: %.asm
 	yasm -f bin $< -o $@
+	chmod +x $@
 
 %.bin: %.s
 	yasm -f bin -r gas -p gas $< -o $@
