@@ -28,34 +28,34 @@ f:
 	; update coords
 	mov eax, 0
 	mov al, byte [input]
-	mov ebx, [coords]
+	mov edx, [coords]
 
 	.check_left:
 	mov cl, 1b
 	and cl, al
 	jz .check_right
-	sub bx, 1
+	sub dx, 1
 
 	.check_right:
 	mov cl, 10b
 	and cl, al
 	jz .check_up
-	add bx, 1
+	add dx, 1
 
 	.check_up:
 	mov cl, 100b
 	and cl, al
 	jz .check_down
-	sub bx, 0x100
+	sub dx, 0x100
 
 	.check_down:
 	mov cl, 1000b
 	and cl, al
 	jz .check_end
-	add bx, 0x100
+	add dx, 0x100
 
 	.check_end:
-	mov [coords], ebx
+	mov [coords], edx
 
 	; get color
 	mov ecx, [coords]
@@ -65,41 +65,41 @@ f:
 	call colorize
 	add esp, 2
 
-	mov ebx, [coords]
-	mov byte [pix+ebx], al
+	mov edx, [coords]
+	mov byte [pix+edx], al
 	ret
 
 colorize:
 	mov al, 0
-	mov bx, 0
+	mov dx, 0
 	mov cx, [esp+4] ; get fun argument
 
 	;red part
-	mov bl, cl
-	and bl, 01110000b
-	sal bl, 1
-	and bl, 11100000b
-	or  al, bl
+	mov dl, cl
+	and dl, 01110000b
+	sal dl, 1
+	and dl, 11100000b
+	or  al, dl
 
 	;green part
-	mov bl, ch
-	and bl, 01110000b
-	sar bl, 1
-	sar bl, 1
-	and bl, 00011100b
-	or  al, bl
+	mov dl, ch
+	and dl, 01110000b
+	sar dl, 1
+	sar dl, 1
+	and dl, 00011100b
+	or  al, dl
 
-	;blue part
+	;dlue part
 	and ch, 10000000b
-	mov bl, ch
+	mov dl, ch
 	and cl, 10000000b
 	sar cl, 1
 	and cl, 01000000b
-	or  bl, cl
+	or  dl, cl
 	mov cl, 6
-	sar bl, cl
-	and bl, 00000011b
-	or  al, bl
+	sar dl, cl
+	and dl, 00000011b
+	or  al, dl
 
 	ret
 
