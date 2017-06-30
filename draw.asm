@@ -13,11 +13,11 @@ state_fun dd init
 
 init:
 	call inv_cross
-	mov eax, f
+	mov eax, draw_loop
 	mov [state_fun], eax
 	ret
 
-f:
+draw_loop:
 	; undraw cross
 	call inv_cross
 
@@ -86,6 +86,8 @@ f:
 
 	call inv_cross
 
+	call draw_palette
+
 	ret
 
 inv_cross:
@@ -123,8 +125,59 @@ inv_cross:
 
 inv_pix: ;pass coords in cl
 	mov al, byte [pix+ecx]
-	xor al, ~1
+	xor al, ~0
 	mov byte [pix+ecx], al
+	ret
+
+draw_palette:
+	mov ecx, 0x10
+	mov edx, pix
+	
+	.y_loop:
+	push ecx
+
+	mov ecx, 0x100
+
+	.x_loop:
+	push edx
+	
+	; get color id
+	mov edx, ecx
+	sar edx, 5
+
+	mov eax, 0
+	mov al, [selected]
+
+	;spagetti party!
+	cmp al, dl
+	je .draw_selected
+
+	.draw_direct:
+	mov al, byte [palette + edx]
+	jmp .draw
+
+	.draw_selected:
+	mov eax, ecx
+	and eax, 0x1f
+	cmp eax, 3
+	jl .do_it ; overlay half columns
+
+	cmp eax, 29
+	jl .draw_direct
+
+	.do_it
+	mov al, byte [palette + edx]
+	xor al, ~0
+
+	.draw:
+	pop edx
+	mov [edx], al ; put color to screen
+	inc edx
+	loop .x_loop
+
+	pop ecx
+	loop .y_loop
+	
 	ret
 
 coords: dd 0x8080
