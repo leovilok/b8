@@ -98,23 +98,36 @@ palette_loop:
 	.check_x:
 	mov cl, 10000b
 	and cl, al
-	jz .check_c
+	jz .check_left
 	call swap_palette_buffer
 	mov ecx, draw_loop
 	mov [state_fun], ecx
 	ret
 
-	; draw pixel
-	.check_c
-	mov cl, 100000b
-	and cl, al
-	jz .check_end
+	;move color cursor
 
-	; change color
+	.check_left:
+	mov eax, 0
+	mov al, byte [pressed_input]
+	
+	mov cl, 1b
+	and cl, al
+	jz .check_right
+	
 	mov cl, [selected]
 	inc cl
 	and cl, [palette_mask]
-	mov byte [selected], cl	
+	mov byte [selected], cl
+
+	.check_right:
+	mov cl, 10b
+	and cl, al
+	jz .check_end
+	
+	mov cl, [selected]
+	dec cl
+	and cl, [palette_mask]
+	mov byte [selected], cl
 
 	.check_end:
 
@@ -190,7 +203,8 @@ draw_palette:
 			jmp .draw
 
 			.draw_selected:
-			;TODO: remove hardcoded values limiting to 16 color palettes
+			;TODO: remove hardcoded values
+			;      limiting to 16 color palettes
 
 			;column borders
 			mov eax, ecx
