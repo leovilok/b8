@@ -32,25 +32,25 @@ draw_loop:
 	mov cl, 1b
 	and cl, al
 	jz .check_right
-	sub dx, 1
+	dec dl
 
 	.check_right:
 	mov cl, 10b
 	and cl, al
 	jz .check_up
-	add dx, 1
+	inc dl
 
 	.check_up:
 	mov cl, 100b
 	and cl, al
 	jz .check_down
-	sub dx, 0x100
+	dec dh
 
 	.check_down:
 	mov cl, 1000b
 	and cl, al
 	jz .update_coords
-	add dx, 0x100
+	inc dh
 	
 	.update_coords:
 	mov [coords], edx
