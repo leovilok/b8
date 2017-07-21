@@ -75,11 +75,7 @@ draw_loop:
 	and cl, al
 	jz .check_end
 
-	; get color
-	mov ecx, 0
-	mov cl, byte [selected]
-	mov al, byte [palette + ecx]
-	mov byte [pix+edx], al
+	call draw_point
 
 	.check_end:
 
@@ -168,6 +164,7 @@ inv_cross:
 	ret
 
 inv_pix: ;pass coords in cl
+	mov eax, 0
 	mov al, byte [pix+ecx]
 	xor al, ~0
 	mov byte [pix+ecx], al
@@ -270,12 +267,57 @@ preprocess_input:
 
 	ret
 
-coords: dd 0x8080
-;pressing_x: db 0
+draw_point:
+	; get topright corner
+	mov edx, [coords]
+	mov ecx, [radius]
+
+	sub dh, cl
+	inc dh
+	add dl, cl
+	
+	; cover the square surface
+	mov ecx, [radius]
+	sal ecx, 1
+	dec ecx
+	.x_loop:
+		push ecx
+		mov ecx, [radius]
+		sal ecx, 1
+		dec ecx
+		
+		; get to the left side
+		sub dl, cl
+		.y_loop
+			push ecx
+
+			; get color & draw pixel
+			mov ecx, 0
+			mov eax, 0
+			mov cl, byte [selected]
+			mov al, byte [palette + ecx]
+			mov byte [pix+edx], al
+
+			pop ecx
+
+			; go one pixel right
+			inc dl
+		loop .y_loop
+		pop ecx
+
+		; go one pixel down
+		inc dh
+	loop .x_loop
+	ret
+
 old_input: db 0
 new_input: db 0
 pressed_input:  db 0
 released_input: db 0
+
+coords: dd 0x8080
+
+radius: dd 0x2
 
 selected: db 0
 palette: db 0, 11b, 11111b, 11100b, 11111100b, 11100000b, 11100011b, ~0
