@@ -262,7 +262,52 @@ draw_palette:
 
 		pop ecx
 	loop .y_loop
+
+	; draw a point to show the radius
+
+	mov edx, [coords]
+	push edx
 	
+	mov al, byte [selected]
+	push eax
+	
+	; set point coords
+	mov dh, 7
+
+	mov dl, 7
+	sub dl, al
+	sal dl, 5
+	add dl, 8
+
+	mov [coords], edx
+
+	; set point color
+
+	cmp al, 0
+	jne .no_black
+	
+	mov al, 7
+	
+	jmp .store_selected
+
+	.no_black:
+
+	mov al, 0
+
+	.store_selected:
+
+	mov byte [selected], al
+
+	; draw point
+	
+	call draw_point
+
+	pop eax
+	mov byte [selected], al
+	
+	pop edx
+	mov [coords], edx
+
 	ret
 
 swap_palette_buffer:
