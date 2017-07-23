@@ -100,7 +100,7 @@ palette_loop:
 	mov [state_fun], ecx
 	ret
 
-	;move color cursor
+	; move color cursor
 
 	.check_left:
 	mov eax, 0
@@ -118,12 +118,40 @@ palette_loop:
 	.check_right:
 	mov cl, 10b
 	and cl, al
-	jz .check_end
+	jz .check_up
 	
 	mov cl, [selected]
 	dec cl
 	and cl, [palette_mask]
 	mov byte [selected], cl
+
+	; change draw point radius
+	.check_up:
+	mov cl, 100b
+	and cl, al
+	jz .check_down
+	
+	mov cl, [radius]
+	inc cl
+	cmp cl, 5
+	jle .no_huge_radius
+	dec cl
+	.no_huge_radius
+	and cl, [palette_mask]
+	mov byte [radius], cl
+
+	.check_down:
+	mov cl, 1000b
+	and cl, al
+	jz .check_end
+	
+	mov cl, [radius]
+	dec cl
+	jnz .no_null_radius
+	inc cl
+	.no_null_radius:
+	and cl, [palette_mask]
+	mov byte [radius], cl
 
 	.check_end:
 
