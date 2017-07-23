@@ -395,4 +395,4 @@ radius: dd 0x2
 selected: db 0
 palette: db 0, 11b, 11111b, 11100b, 11111100b, 11100000b, 11100011b, ~0
 palette_mask: db 7
-palette_buffer: times 0x1000 db 0 ;256 col * 16 lines
+palette_buffer: db 0 ;times 0x1000 db 0 ;256 col * 16 lines
